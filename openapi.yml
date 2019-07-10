@@ -1,0 +1,513 @@
+openapi: 3.0.0
+
+info:
+  version: "1.0.0"
+  title: "RUIAN API"
+  description: "API Specification for RUIAN API"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    name: "Jindrich Skupa"
+    email: "jindrich.skupa@gmail.com"
+  license:
+    name: "MIT"
+    url: "https://opensource.org/licenses/MIT"
+
+servers:
+  - url: https://ruian.jindrichskupa.cz/
+    description: development server
+
+security:
+  - ApiTokenAuth: []
+
+paths:
+  /cities:
+    get:
+      summary: "List of cities"
+      operationId: "GetCitiesList"
+      responses:
+        200:
+          $ref: '#/components/responses/Cities'
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/NotAuthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalError"
+      tags:
+        - "Cities"
+  /city_parts:
+    get:
+      summary: "List of city parts"
+      operationId: "GetCityPartsList"
+      responses:
+        200:
+          $ref: '#/components/responses/CityParts'
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/NotAuthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalError"
+      tags:
+        - "CityParts"
+  /streets:
+    get:
+      summary: "List of streets"
+      operationId: "GetStreetsList"
+      responses:
+        200:
+          $ref: '#/components/responses/Streets'
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/NotAuthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalError"
+      tags:
+        - "Cities"
+        - "Streets"
+  /places/search:
+    get:
+      summary: "List of places"
+      operationId: "GetPlacesList"
+      parameters:
+        - $ref: "#/components/parameters/StreetName"
+        - $ref: "#/components/parameters/CityName"
+        - $ref: "#/components/parameters/CityPartName"
+        - $ref: "#/components/parameters/Zip"
+      responses:
+        200:
+          $ref: '#/components/responses/Places'
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/NotAuthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalError"
+      tags:
+        - "Places"
+
+components:
+  securitySchemes:
+    ApiTokenAuth:
+      type: "apiKey"
+      in: "header"
+      name: "X-Api-Token"
+  parameters:
+    xApiToken:
+      name: "X-Api-Token"
+      in: "header"
+      required: true
+      schema:
+        type: "string"
+        example: "7EEF6E23-CBC0-425B-A513-206B71D1F2EC"
+    IfModifiedSince:
+      name: "If-Modified-Since"
+      in: "header"
+      description: "Date of last know change"
+      required: false
+      schema:
+        type: "string"
+        format: "date-time"
+        example: "Wed, 21 Oct 2015 07:28:00 GMT"
+    CityId:
+      name: "CityId"
+      in: "path"
+      description: "ObjectId"
+      required: false
+      schema:
+        $ref: "#/components/schemas/ObjectId"
+    CityName:
+      name: "CityName"
+      in: "path"
+      description: "ObjectName"
+      required: false
+      schema:
+        $ref: "#/components/schemas/ObjectName"
+    CityPartId:
+      name: "CityPartId"
+      in: "path"
+      description: "ObjectId"
+      required: false
+      schema:
+        $ref: "#/components/schemas/ObjectId"
+    CityPartName:
+      name: "CityPartName"
+      in: "path"
+      description: "ObjectName"
+      required: false
+      schema:
+        $ref: "#/components/schemas/ObjectName"
+    RegionId:
+      name: "RegionId"
+      in: "path"
+      description: "ObjectId"
+      required: false
+      schema:
+        $ref: "#/components/schemas/ObjectId"
+    RegionName:
+      name: "RegionName"
+      in: "path"
+      description: "ObjectName"
+      required: false
+      schema:
+        $ref: "#/components/schemas/ObjectName"
+    CountyId:
+      name: "CountyId"
+      in: "path"
+      description: "ObjectId"
+      required: false
+      schema:
+        $ref: "#/components/schemas/ObjectId"
+    CountyName:
+      name: "CountyName"
+      in: "path"
+      description: "ObjectName"
+      required: false
+      schema:
+        $ref: "#/components/schemas/ObjectName"
+    StreetId:
+      name: "StreetId"
+      in: "path"
+      description: "ObjectId"
+      required: false
+      schema:
+        $ref: "#/components/schemas/ObjectId"
+    StreetName:
+      name: "StreetName"
+      in: "path"
+      description: "ObjectName"
+      required: false
+      schema:
+        $ref: "#/components/schemas/ObjectName"
+
+    Zip:
+      name: "Zip"
+      in: "path"
+      description: "ObjectId"
+      required: false
+      schema:
+        $ref: "#/components/schemas/ObjectId"
+    StateCode:
+      name: "StateCode"
+      in: "path"
+      description: "StateCode"
+      required: true
+      schema:
+        $ref: "#/components/schemas/StateCode"
+
+  #requestBodies:
+  responses:
+    Cities:
+      description: "Cities"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Cities'
+    CityParts:
+      description: "CityParts"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CityParts'
+    Streets:
+      description: "Streets"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Streets'
+    Places:
+      description: "Places"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Places'
+    Ok:
+      description: "Ok"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Ok"
+    Created:
+      description: "Created"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Created"
+    BadRequest:
+      description: "Bad request"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error4xx"
+    NotAuthorized:
+      description: "Not authorized"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error4xx"
+    Forbidden:
+      description: "Forbidden"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error4xx"
+    NotFound:
+      description: "Not found"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error4xx"
+    InternalError:
+      description: "Internal server error"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error500"
+  schemas:
+    StateCode:
+      type: "string"
+      enum:
+        - cz
+        - sk
+      example: cz
+    ObjectId:
+      type: "integer"
+      example: 1234567
+    ObjectName:
+      type: "string"
+      example: "Lhota"
+    City:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+          example: 200
+        name:
+          type: "string"
+          example: "Lhota"
+        region:
+          $ref: "#/components/schemas/ObjectId"
+        county:
+          $ref: "#/components/schemas/ObjectId"
+    CityPart:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+          example: 200
+        name:
+          type: "string"
+          example: "Abertamy"
+    Street:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+          example: 200
+        name:
+          type: "string"
+          example: "Antuškova"
+        city:
+          $ref: "#/components/schemas/ObjectId"
+        city_part:
+          $ref: "#/components/schemas/ObjectId"
+    Region:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+          example: 200
+        name:
+          type: "string"
+          example: "Plzeňský kraj"
+    County:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+          example: 200
+        name:
+          type: "string"
+          example: "Plzeň-město"
+        region:
+          $ref: "#/components/schemas/ObjectId"
+    Place:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+          example: 200
+        e:
+          type: "integer"
+          format: "int64"
+          example: 20
+        p:
+          type: "integer"
+          format: "int64"
+          example: 20
+        o:
+          type: "integer"
+          format: "int64"
+          example: 1
+        street_id:
+          type: "integer"
+          format: "int64"
+          example: 200
+        city_id:
+          type: "integer"
+          format: "int64"
+          example: 200
+        city_part_id:
+          type: "integer"
+          format: "int64"
+          example: 200
+        zip:
+          type: "string"
+          example: "33008"
+        x:
+          type: "number"
+          example: 200
+        y:
+          type: "number"
+          example: 200
+        gps:
+          type: "array"
+          items:
+            type: number
+          example:
+            - 13.45
+            - 67.22
+    Exports:
+      type: object
+      properties:
+        dump:
+          $ref: "#/components/schemas/FullDump"
+        increments:
+          type: array
+          items:
+            $ref: "#/components/schemas/DiffSQL"
+    FullDump:
+      type: "object"
+      properties:
+        url:
+          type: string
+          format: uri
+          example: "https://ruian.eman.cz/exports/full_20190101.sqlite.zip"
+        zip_size:
+          type: integer
+          example: 1200020
+        file_size:
+          type: integer
+          example: 5200020
+    DiffSQL:
+      type: "object"
+      properties:
+        url:
+          type: string
+          format: uri
+          example: "https://ruian.eman.cz/exports/increment_20190201.sqlite.zip"
+        zip_size:
+          type: integer
+          example: 12000
+        file_size:
+          type: integer
+          example: 52000
+    Cities:
+      type: "array"
+      items:
+        $ref: "#/components/schemas/City"
+    CityParts:
+      type: "array"
+      items:
+        $ref: "#/components/schemas/CityPart"
+    Streets:
+      type: "array"
+      items:
+        $ref: "#/components/schemas/Street"
+    Regions:
+      type: "array"
+      items:
+        $ref: "#/components/schemas/Region"
+    Counties:
+      type: "array"
+      items:
+        $ref: "#/components/schemas/County"
+    Places:
+      type: "array"
+      items:
+        $ref: "#/components/schemas/Place"
+    Ok:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          format: "int64"
+          example: "200"
+        result:
+          type: "string"
+    Created:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          format: "int64"
+          example: "201"
+        result:
+          type: "string"
+    Error4xx:
+      type: "object"
+      properties:
+        code:
+          type: integer
+          example: 400
+        errorDescription:
+          type: string
+          example: "Error description"
+        errors:
+          type: "array"
+          items:
+            $ref:  "#/components/schemas/Errors"
+          example:
+            - "Error 1"
+            - "Error 2"
+    Errors:
+      type: string
+      enum:
+        - "Error 1"
+        - "Error 2"
+      example: Invalid XML
+    Error500:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          format: "int64"
+          example: 500
+        errorDescription:
+          type: "string"
+          example: "Internal Server Error"
+      xml:
+        name: "Error"

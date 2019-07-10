@@ -1,0 +1,28 @@
+# Go parameters
+GOCMD=go
+GOBUILD=$(GOCMD) build
+GOCLEAN=$(GOCMD) clean
+GOLIST=$(GOCMD) list
+GOTEST=$(GOCMD) test
+GOVET=$(GOCMD) vet
+GOFMT=$(GOCMD) fmt
+BINARY_NAME=ruian-api
+BINARY_NAME_CI=$(CI_PROJECT_DIR)/$(BINARY_NAME)
+
+
+all: test build
+build:
+				$(GOBUILD) -race -o $(BINARY_NAME) .
+test:
+				$(GOFMT) $(shell $(GOLIST) ./... | grep -v /vendor/)
+				$(GOVET) $(shell $(GOLIST) ./... | grep -v /vendor/)
+				$(GOTEST) -cover -race $(shell $(GOLIST) ./... | grep -v /vendor/)
+clean:
+				$(GOCLEAN)
+				rm -f $(BINARY_NAME)
+run: build
+				./$(BINARY_NAME)
+
+# Cross compilation
+build-ci:
+				CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_NAME_CI) -v *.go
