@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/jindrichskupa/ruian-api/app/handler"
@@ -29,6 +30,11 @@ func (a *App) Initialize(config *config.Config) {
 		config.DB.Name)
 
 	db, err := gorm.Open(config.DB.Dialect, dbURI)
+	for tries := 0; tries < 5 && err != nil; tries++ {
+		time.Sleep(5 * time.Second)
+		log.Println("Trying to reconnect db: ", err)
+		db, err = gorm.Open(config.DB.Dialect, dbURI)
+	}
 	if err != nil {
 		log.Fatal("Could not connect database: ", err)
 	}
@@ -41,11 +47,13 @@ func (a *App) Initialize(config *config.Config) {
 	a.DB = model.DBMigrate(db)
 	a.Router = mux.NewRouter()
 	a.setRouters()
+	log.Println("RUIAN API application started")
 }
 
 // Set all required routers
 func (a *App) setRouters() {
 	// Routing for handling the projects
+	a.Get("/healtz", a.GetHealtStatus)
 	a.Get("/cities", a.GetAllCities)
 	a.Get("/cities/{name}", a.GetCity)
 	a.Get("/city_parts", a.GetAllCityParts)
@@ -62,6 +70,11 @@ func (a *App) setRouters() {
 // Get wraps the router for GET method
 func (a *App) Get(path string, f func(w http.ResponseWriter, r *http.Request)) {
 	a.Router.HandleFunc(path, f).Methods("GET")
+}
+
+// GetHealtStatus retuns application status info
+func (a *App) GetHealtStatus(w http.ResponseWriter, r *http.Request) {
+	handler.GetHealtStatus(a.DB, w, r)
 }
 
 // GetAllCities handlers to manage City Data

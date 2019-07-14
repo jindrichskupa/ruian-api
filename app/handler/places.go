@@ -79,7 +79,7 @@ func searchPlaceOr404(db *gorm.DB, w http.ResponseWriter, r *http.Request) *[]mo
 			value := normalizeNameSearch(queryValues[filter][0])
 			value = "%" + value + "%"
 			log.Println("Key [", filter, "]: ", value)
-			join := fmt.Sprintf("JOIN %s ON %s.%s_id = %s.id AND %s.name_search LIKE ?",
+			join := fmt.Sprintf("INNER JOIN %s ON %s.%s_id = %s.id AND %s.name_search LIKE ?",
 				tables[filter],
 				tables["place"],
 				filter,
@@ -92,7 +92,7 @@ func searchPlaceOr404(db *gorm.DB, w http.ResponseWriter, r *http.Request) *[]mo
 	}
 
 	Places := []model.Place{}
-	err := tx.Preload("Street").Preload("City").Preload("CityPart").Find(&Places).Error
+	err := tx.Preload("Street").Preload("City").Preload("CityPart").Select("DISTINCT \"view_address_places\".*").Find(&Places).Error
 
 	if err != nil {
 		respondError(w, http.StatusNotFound, err.Error())

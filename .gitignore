@@ -1,3 +1,5 @@
 /.vscode/
 /data/
+/vendor/
 /ruian-api
+/db/

@@ -7,7 +7,7 @@ GOTEST=$(GOCMD) test
 GOVET=$(GOCMD) vet
 GOFMT=$(GOCMD) fmt
 BINARY_NAME=ruian-api
-BINARY_NAME_CI=$(CI_PROJECT_DIR)/$(BINARY_NAME)
+BINARY_NAME_LINUX64=$(BINARY_NAME)
 
 
 all: test build
@@ -24,5 +24,5 @@ run: build
 				./$(BINARY_NAME)
 
 # Cross compilation
-build-ci:
-				CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_NAME_CI) -v *.go
+linux64:
+				CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_NAME_LINUX64) -v .

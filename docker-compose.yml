@@ -1,0 +1,33 @@
+version: '3.4'
+
+services:
+  ruian:
+    build: .
+    ports:
+     - "8080:8080"
+    environment:
+      RUIAN_LISTEN_IP: 0.0.0.0
+      RUIAN_LISTEN_PORT: 8080
+      RUIAN_DB_HOSTNAME: postgresql
+      RUIAN_DB_PORT: 5432
+      RUIAN_DB_USER: postgres
+      RUIAN_DB_PASSWORD: password
+      RUIAN_DB_NAME: ruian
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healtz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    volumes: 
+      - ./ruian-api:/ruian-api
+    depends_on:
+      - postgresql
+  postgresql:
+    image: mdillon/postgis:11
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ruian
+    volumes: 
+      - ./db:/var/lib/postgresql/data
+      - ./data:/data
