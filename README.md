@@ -16,6 +16,20 @@ make docker
 
 ## Run
 
+### Configuration ENV variables
+
+Variables and default values
+
+```bash
+RUIAN_LISTEN_IP=0.0.0.0
+RUIAN_LISTEN_PORT=8080
+RUIAN_DB_HOSTNAME=localhost
+RUIAN_DB_PORT=5432
+RUIAN_DB_USER=postgres
+RUIAN_DB_PASSWORD=password
+RUIAN_DB_NAME=ruiandb
+```
+
 ### Docker compose
 
 1. update `docker-compose.yml` environment variables values
@@ -24,7 +38,7 @@ make docker
 ### Standalone
 
 ```bash
-RUIAN_DB_HOSTNAME=localhost RUIAN_DB_PORT=5432 RUIAN_DB_USER=postgres RUIAN_DB_PASSWORD=password RUIAN_DB_NAME=ruian ./ruian-api
+RUIAN_DB_NAME=ruian_db_test ./ruian-api
 ```
 
 ## Database setup
