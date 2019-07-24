@@ -2,6 +2,16 @@
 
 ## Description
 
+Public REST API for Czech RUIAN Database based on CSV exports
+
+### TODO
+
+* [ ] Automate load from CSV
+* [ ] Automate update from CSV
+* [ ] Generate exports - full (CSV, JSON, SQLite)
+* [ ] Generate exports - diff (CSV, JSON, SQLite)
+* [ ] Improvements...
+
 ## Build
 
 ```bash
@@ -28,6 +38,7 @@ RUIAN_DB_PORT=5432
 RUIAN_DB_USER=postgres
 RUIAN_DB_PASSWORD=password
 RUIAN_DB_NAME=ruiandb
+RUIAN_DB_RETRIES=10
 ```
 
 ### Docker compose
@@ -50,7 +61,7 @@ RUIAN_DB_NAME=ruian_db_test ./ruian-api
 
 ### Setup
 
-1. download data ziped CSV files
+1. download ziped CSV files
 2. extract .zip files
 3. join files and delete CSV headers with scripts
 4. update paths in `import.sql` script
@@ -67,7 +78,7 @@ RUIAN_DB_NAME=ruian_db_test ./ruian-api
 
 * [openapi.yml](./openapi.yml)
 
-### API Call examples
+### API Call Examples
 
 * search for address based on part of address
 
@@ -75,8 +86,14 @@ RUIAN_DB_NAME=ruian_db_test ./ruian-api
 curl 'localhost:8080/places/search?street=Sko&city=Zruč%20-%20S&city_part=Senec' | jq
 ```
 
-* list streets based on name
+* search for address based on GPS coordinates and range
 
 ```bash
-curl 'localhost:8080/streets/Skolni' | jq
+curl 'localhost:8080/places/search?latitude=49.8009&longitude=13.4193&range=500&limit=10' | jq
+```
+
+* list streets based on street and city names name
+
+```bash
+curl 'localhost:8080/streets/search?street=Sko&city=Zruč%20-%20S' | jq
 ```
