@@ -20,10 +20,19 @@ security:
   - ApiTokenAuth: []
 
 paths:
+  /healtz:
+    get:
+      summary: "HealthCheck"
+      operationId: "Status"
+      responses:
+        200:
+          $ref: '#/components/responses/Status'
   /cities:
     get:
       summary: "List of cities"
       operationId: "GetCitiesList"
+      parameters:
+        - $ref: "#/components/parameters/CityName"
       responses:
         200:
           $ref: '#/components/responses/Cities'
@@ -43,6 +52,8 @@ paths:
     get:
       summary: "List of city parts"
       operationId: "GetCityPartsList"
+      parameters:
+        - $ref: "#/components/parameters/CityPartName"
       responses:
         200:
           $ref: '#/components/responses/CityParts'
@@ -62,6 +73,8 @@ paths:
     get:
       summary: "List of streets"
       operationId: "GetStreetsList"
+      parameters:
+        - $ref: "#/components/parameters/StreetName"
       responses:
         200:
           $ref: '#/components/responses/Streets'
@@ -76,17 +89,39 @@ paths:
         500:
           $ref: "#/components/responses/InternalError"
       tags:
-        - "Cities"
         - "Streets"
-  /places/search:
+  /places:
     get:
       summary: "List of places"
       operationId: "GetPlacesList"
+      responses:
+        200:
+          $ref: '#/components/responses/Places'
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/NotAuthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalError"
+      tags:
+        - "Places"
+  /places/search:
+    get:
+      summary: "Search of places"
+      operationId: "GetPlacesListBySearch"
       parameters:
         - $ref: "#/components/parameters/StreetName"
         - $ref: "#/components/parameters/CityName"
         - $ref: "#/components/parameters/CityPartName"
         - $ref: "#/components/parameters/Zip"
+        - $ref: "#/components/parameters/Latitude"
+        - $ref: "#/components/parameters/Longitude"
+        - $ref: "#/components/parameters/Range"
+        - $ref: "#/components/parameters/Limit"
       responses:
         200:
           $ref: '#/components/responses/Places'
@@ -121,7 +156,6 @@ components:
       name: "If-Modified-Since"
       in: "header"
       description: "Date of last know change"
-      required: false
       schema:
         type: "string"
         format: "date-time"
@@ -130,78 +164,90 @@ components:
       name: "CityId"
       in: "path"
       description: "ObjectId"
-      required: false
       schema:
         $ref: "#/components/schemas/ObjectId"
     CityName:
       name: "CityName"
       in: "path"
       description: "ObjectName"
-      required: false
       schema:
         $ref: "#/components/schemas/ObjectName"
     CityPartId:
       name: "CityPartId"
       in: "path"
       description: "ObjectId"
-      required: false
       schema:
         $ref: "#/components/schemas/ObjectId"
     CityPartName:
       name: "CityPartName"
       in: "path"
       description: "ObjectName"
-      required: false
       schema:
         $ref: "#/components/schemas/ObjectName"
+    Latitude:
+      name: "Latitude"
+      in: "path"
+      description: "GPS Latitude"
+      schema:
+        $ref: "#/components/schemas/GpsCoordinate"
+    Longitude:
+      name: "Longitude"
+      in: "path"
+      description: "GPS Longitude"
+      schema:
+        $ref: "#/components/schemas/GpsCoordinate"
+    Range:
+      name: "Range"
+      in: "path"
+      description: "GPS Range in meters"
+      schema:
+        $ref: "#/components/schemas/Range"
+    Limit:
+      name: "Limit"
+      in: "path"
+      description: "Max results"
+      schema:
+        $ref: "#/components/schemas/Limit"
     RegionId:
       name: "RegionId"
       in: "path"
       description: "ObjectId"
-      required: false
       schema:
         $ref: "#/components/schemas/ObjectId"
     RegionName:
       name: "RegionName"
       in: "path"
       description: "ObjectName"
-      required: false
       schema:
         $ref: "#/components/schemas/ObjectName"
     CountyId:
       name: "CountyId"
       in: "path"
       description: "ObjectId"
-      required: false
       schema:
         $ref: "#/components/schemas/ObjectId"
     CountyName:
       name: "CountyName"
       in: "path"
       description: "ObjectName"
-      required: false
       schema:
         $ref: "#/components/schemas/ObjectName"
     StreetId:
       name: "StreetId"
       in: "path"
       description: "ObjectId"
-      required: false
       schema:
         $ref: "#/components/schemas/ObjectId"
     StreetName:
       name: "StreetName"
       in: "path"
       description: "ObjectName"
-      required: false
       schema:
         $ref: "#/components/schemas/ObjectName"
-
     Zip:
       name: "Zip"
       in: "path"
       description: "ObjectId"
-      required: false
       schema:
         $ref: "#/components/schemas/ObjectId"
     StateCode:
@@ -238,6 +284,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Places'
+    Status:
+      description: "Status"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Status"
     Ok:
       description: "Ok"
       content:
@@ -369,37 +421,38 @@ components:
           format: "int64"
           example: 20
         o:
-          type: "integer"
-          format: "int64"
-          example: 1
-        street_id:
-          type: "integer"
-          format: "int64"
-          example: 200
-        city_id:
-          type: "integer"
-          format: "int64"
-          example: 200
-        city_part_id:
-          type: "integer"
-          format: "int64"
-          example: 200
+          type: "string"
+          example: "1A"
+        street:
+          type: "string"
+          example: "Senecká"
+        city:
+          type: "string"
+          example: "Zruč-Senec"
+        city_part:
+          type: "string"
+          example: Senec
         zip:
           type: "string"
           example: "33008"
-        x:
+        address_string: 
+          type: "string"
+          example: "Senecká 11, Senec, Zruč-Senec, 33008"
+        lat:
           type: "number"
-          example: 200
-        y:
+          example: 49.8061372290933
+        lng:
           type: "number"
-          example: 200
-        gps:
-          type: "array"
-          items:
-            type: number
-          example:
-            - 13.45
-            - 67.22
+          example: 13.4249227775432
+    GpsCoordinate:
+      type: "number"
+      example: 13.4249227775432
+    Limit:
+      type: "number"
+      example: 100
+    Range:
+      type: "number"
+      example: 100
     Exports:
       type: object
       properties:
@@ -459,6 +512,18 @@ components:
       type: "array"
       items:
         $ref: "#/components/schemas/Place"
+    Status:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          enum:
+            - "OK"
+            - "ERROR"
+          example: "OK"
+        message:
+          type: "string"
+          example: "I'm alive"
     Ok:
       type: "object"
       properties:

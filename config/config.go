@@ -24,6 +24,7 @@ type DBConfig struct {
 	Name     string
 	Charset  string
 	Prefix   string
+	Retries  int
 }
 
 // EnvConfig stores config from ENV
@@ -33,6 +34,7 @@ type EnvConfig struct {
 	DBName     string `envconfig:"db_name" required:"false" default:"ruiandb"`
 	DBUser     string `envconfig:"db_user" required:"false" default:"postgres"`
 	DBPassword string `envconfig:"db_password" required:"false" default:"password"`
+	DBRetries  int    `envconfig:"db_retries" required:"false" default:"1"`
 	ListenIP   string `envconfig:"listen_ip" required:"false" default:"0.0.0.0"`
 	ListenPort uint16 `envconfig:"listen_port" required:"false" default:"8080"`
 }
@@ -52,6 +54,7 @@ func GetConfig() *Config {
 			Username: s.DBUser,
 			Password: s.DBPassword,
 			Name:     s.DBName,
+			Retries:  s.DBRetries,
 			Charset:  "utf8",
 			Prefix:   "view_address_",
 		},

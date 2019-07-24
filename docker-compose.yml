@@ -13,6 +13,7 @@ services:
       RUIAN_DB_USER: postgres
       RUIAN_DB_PASSWORD: password
       RUIAN_DB_NAME: ruian
+      RUIAN_DB_RETRIES: 100
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/healtz"]
       interval: 30s

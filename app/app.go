@@ -30,7 +30,7 @@ func (a *App) Initialize(config *config.Config) {
 		config.DB.Name)
 
 	db, err := gorm.Open(config.DB.Dialect, dbURI)
-	for tries := 0; tries < 10 && err != nil; tries++ {
+	for tries := 0; tries < config.DB.Retries && err != nil; tries++ {
 		time.Sleep(5 * time.Second)
 		log.Println("Trying to reconnect (", tries, ") db: ", err)
 		db, err = gorm.Open(config.DB.Dialect, dbURI)

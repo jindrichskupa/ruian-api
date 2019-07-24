@@ -64,7 +64,7 @@ func searchPlaceOr404(db *gorm.DB, w http.ResponseWriter, r *http.Request) *[]mo
 	log.Println(normalizeNameSearch("Školní 105, Zruč - Senec, 33008"))
 
 	log.Println(queryValues)
-	filters := []string{"street", "number", "city_part", "city", "zip"}
+	filters := []string{"street", "number", "city_part", "city"}
 	tables := map[string]string{
 		"place":     db.NewScope(&model.Place{}).TableName(),
 		"street":    db.NewScope(&model.Street{}).TableName(),
@@ -91,8 +91,48 @@ func searchPlaceOr404(db *gorm.DB, w http.ResponseWriter, r *http.Request) *[]mo
 		}
 	}
 
+	if queryValues["latitude"] != nil && queryValues["longitude"] != nil {
+		gpsRange := 1000
+		if queryValues["range"] != nil {
+			gpsRange, err := strconv.Atoi(queryValues["range"][0])
+			if err != nil || gpsRange > 1000 {
+				gpsRange = 1000
+			}
+		}
+		// geoFilter := fmt.Sprintf("earth_box(ll_to_earth(latitude,longitude), %s) @> ll_to_earth(%s,%s)",
+		// 	queryValues["range"][0],
+		// 	queryValues["latitude"][0],
+		// 	queryValues["longitude"][0],
+		// )
+		geoFilter := fmt.Sprintf("point(latitude,longitude) <@> point(%s,%s) < %d::float8/1609::float8",
+			queryValues["latitude"][0],
+			queryValues["longitude"][0],
+			gpsRange,
+		)
+
+		tx = tx.Where(geoFilter)
+	}
+
+	if queryValues["zip"] != nil {
+		tx = tx.Where("zip LIKE ?", "%"+queryValues["zip"][0]+"%")
+	}
+
+	if queryValues["limit"] != nil {
+		limit, err := strconv.Atoi(queryValues["limit"][0])
+		if err != nil {
+			limit = 100
+		}
+		tx = tx.Limit(limit)
+	} else {
+		tx = tx.Limit(100)
+	}
+
 	Places := []model.Place{}
-	err := tx.Preload("Street").Preload("City").Preload("CityPart").Select("DISTINCT \"view_address_places\".*").Find(&Places).Error
+	err := tx.Preload("Street").
+		Preload("City").
+		Preload("CityPart").
+		Select("DISTINCT \"view_address_places\".*").
+		Find(&Places).Error
 
 	if err != nil {
 		respondError(w, http.StatusNotFound, err.Error())
