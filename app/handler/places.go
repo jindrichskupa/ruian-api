@@ -61,7 +61,7 @@ func getPlaceOr404(db *gorm.DB, id int, w http.ResponseWriter, r *http.Request) 
 func searchPlaceOr404(db *gorm.DB, w http.ResponseWriter, r *http.Request) *[]model.Place {
 	queryValues := r.URL.Query()
 
-	log.Println(normalizeNameSearch("Školní 105, Zruč - Senec, 33008"))
+	//log.Println(normalizeNameSearch("Školní 105, Zruč - Senec, 33008"))
 
 	log.Println(queryValues)
 	filters := []string{"street", "number", "city_part", "city"}
@@ -120,11 +120,11 @@ func searchPlaceOr404(db *gorm.DB, w http.ResponseWriter, r *http.Request) *[]mo
 	if queryValues["limit"] != nil {
 		limit, err := strconv.Atoi(queryValues["limit"][0])
 		if err != nil {
-			limit = 100
+			limit = 200
 		}
 		tx = tx.Limit(limit)
 	} else {
-		tx = tx.Limit(100)
+		tx = tx.Limit(200)
 	}
 
 	Places := []model.Place{}

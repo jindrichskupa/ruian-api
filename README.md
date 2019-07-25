@@ -14,6 +14,14 @@ Public REST API for Czech RUIAN Database based on CSV exports
 
 ## Build
 
+### Download dependencies
+
+```bash
+dep ensure
+```
+
+### Make
+
 ```bash
 make
 

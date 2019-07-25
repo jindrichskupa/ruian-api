@@ -109,6 +109,27 @@ paths:
           $ref: "#/components/responses/InternalError"
       tags:
         - "Places"
+  /places/{PlaceId}:
+    get:
+      summary: "Place by ID"
+      operationId: "GetPlacePlaceByID"
+      parameters:
+        - $ref: "#/components/parameters/PlaceId"
+      responses:
+        200:
+          $ref: '#/components/responses/Places'
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/NotAuthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalError"
+      tags:
+        - "Places"
   /places/search:
     get:
       summary: "Search of places"
@@ -244,6 +265,12 @@ components:
       description: "ObjectName"
       schema:
         $ref: "#/components/schemas/ObjectName"
+    PlaceId:
+      name: "PlaceId"
+      in: "path"
+      description: "ObjectId"
+      schema:
+        $ref: "#/components/schemas/ObjectId"
     Zip:
       name: "Zip"
       in: "path"
