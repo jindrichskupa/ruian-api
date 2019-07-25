@@ -94,14 +94,112 @@ RUIAN_DB_NAME=ruian_db_test ./ruian-api
 curl 'localhost:8080/places/search?street=Sko&city=Zruč%20-%20S&city_part=Senec' | jq
 ```
 
+```json
+[
+  {
+    "id": 9063811,
+    "p": 78,
+    "zip": "33008",
+    "lng": 13.4180709920695,
+    "lat": 49.7987100376894,
+    "street": "Školní",
+    "city": "Zruč-Senec",
+    "city_part": "Senec",
+    "address_string": "Školní 78, Senec, Zruč-Senec, 33008"
+  },
+  {
+    "id": 9064001,
+    "p": 97,
+    "zip": "33008",
+    "lng": 13.4185320615227,
+    "lat": 49.7987472256835,
+    "street": "Školní",
+    "city": "Zruč-Senec",
+    "city_part": "Senec",
+    "address_string": "Školní 97, Senec, Zruč-Senec, 33008"
+  },
+  {
+    "id": 9064028,
+    "p": 99,
+    "zip": "33008",
+    "lng": 13.4185282829638,
+    "lat": 49.7985229241633,
+    "street": "Školní",
+    "city": "Zruč-Senec",
+    "city_part": "Senec",
+    "address_string": "Školní 99, Senec, Zruč-Senec, 33008"
+  },
+  ...
+]
+```
+
 * search for address based on GPS coordinates and range
 
 ```bash
-curl 'localhost:8080/places/search?latitude=49.8009&longitude=13.4193&range=500&limit=10' | jq
+curl 'localhost:8080/places/search?latitude=49.8009&longitude=13.4193&range=500&limit=3' | jq
+```
+
+```json
+[
+  {
+    "id": 9063081,
+    "p": 1,
+    "zip": "33008",
+    "lng": 13.4207954316166,
+    "lat": 49.7937274728657,
+    "street": "Senecká",
+    "city": "Zruč-Senec",
+    "city_part": "Senec",
+    "address_string": "Senecká 1, Senec, Zruč-Senec, 33008"
+  },
+  {
+    "id": 9063099,
+    "p": 2,
+    "zip": "33008",
+    "lng": 13.4212828255798,
+    "lat": 49.7933398312855,
+    "street": "Senecká",
+    "city": "Zruč-Senec",
+    "city_part": "Senec",
+    "address_string": "Senecká 2, Senec, Zruč-Senec, 33008"
+  },
+  {
+    "id": 9063102,
+    "p": 4,
+    "zip": "33008",
+    "lng": 13.4201734224913,
+    "lat": 49.7928310973284,
+    "street": "Strmá",
+    "city": "Zruč-Senec",
+    "city_part": "Senec",
+    "address_string": "Strmá 4, Senec, Zruč-Senec, 33008"
+  }
+]
 ```
 
 * list streets based on street and city names name
 
 ```bash
 curl 'localhost:8080/streets/search?street=Sko&city=Zruč%20-%20S' | jq
+```
+
+* list cadastral territories based on name
+
+```bash
+curl 'localhost:8080/cadastral_territories/Holesovice' | jq
+```
+
+```json
+[
+  {
+    "id": 730122,
+    "name": "Holešovice",
+    "city": "Praha"
+  },
+  {
+    "id": 641111,
+    "name": "Holešovice u Chroustovic",
+    "city": "Chroustovice"
+  }
+]
 ```
