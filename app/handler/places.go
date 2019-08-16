@@ -64,7 +64,10 @@ func searchPlaceOr404(db *gorm.DB, w http.ResponseWriter, r *http.Request) *[]mo
 	//log.Println(normalizeNameSearch("Školní 105, Zruč - Senec, 33008"))
 
 	log.Println(queryValues)
-	filters := []string{"street", "number", "city_part", "city"}
+	filters := []string{"street", "city_part", "city"}
+	numbers := []string{"p", "e"}
+	likes := []string{"zip", "o"}
+
 	tables := map[string]string{
 		"place":     db.NewScope(&model.Place{}).TableName(),
 		"street":    db.NewScope(&model.Street{}).TableName(),
@@ -113,8 +116,20 @@ func searchPlaceOr404(db *gorm.DB, w http.ResponseWriter, r *http.Request) *[]mo
 		tx = tx.Where(geoFilter)
 	}
 
-	if queryValues["zip"] != nil {
-		tx = tx.Where("zip LIKE ?", "%"+queryValues["zip"][0]+"%")
+	for _, number := range numbers {
+		if queryValues[number] != nil {
+			value := queryValues[number][0]
+			log.Println("Key [", number, "]: ", value)
+			tx = tx.Where(number+" = ?", value)
+		}
+	}
+
+	for _, like := range likes {
+		if queryValues[like] != nil {
+			value := queryValues[like][0]
+			log.Println("Key [", like, "]: ", value)
+			tx = tx.Where(like+" LIKE ?", "%"+value+"%")
+		}
 	}
 
 	if queryValues["limit"] != nil {
