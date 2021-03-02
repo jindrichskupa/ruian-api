@@ -29,8 +29,8 @@ CREATE TABLE import_address_places (
   street_number INTEGER,
   street_number_char  VARCHAR(10),
   zip  VARCHAR(255),
-  x  REAL,
   y REAL,
+  x  REAL,
   valid_from  TIMESTAMP WITHOUT TIME ZONE
 );
 
@@ -108,10 +108,10 @@ CREATE MATERIALIZED VIEW view_address_places AS
     zip,
   --  mop_id as mop_name_id,
   --  momc_id as momc_name_id,
-    x,
     y,
-    ST_X(ST_AsText(ST_Transform(ST_MakePoint(-1 * x,-1 * y), '+init=epsg:5514', '+init=epsg:4326'))) as longitude,
-    ST_Y(ST_AsText(ST_Transform(ST_MakePoint(-1 * x,-1 * y), '+init=epsg:5514', '+init=epsg:4326'))) as latitude,
+    x,
+    ST_X(ST_Transform(ST_MakePoint(-1*y,-1*x), '+init=epsg:5514 +towgs84=570.8,85.7,462.8,4.998,1.587,5.261,3.56', '+init=epsg:4326')) as longitude,
+    ST_Y(ST_Transform(ST_MakePoint(-1*y,-1*x), '+init=epsg:5514 +towgs84=570.8,85.7,462.8,4.998,1.587,5.261,3.56', '+init=epsg:4326')) as latitude,
   --  now() as created_at,
   --  now() as updated_at,
     false as imported
