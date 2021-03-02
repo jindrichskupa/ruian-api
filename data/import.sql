@@ -57,7 +57,7 @@ CREATE MATERIALIZED VIEW view_address_cities AS
   SELECT 
     city_id as id,
     city_name as name,
-    regexp_replace(regexp_replace(regexp_replace(lower(to_ascii(convert_to(import_address_places.city_name,'latin2'), 'latin2')), '-', ' '),'\.',' ','g'), '\s+', ' ','g') as name_search
+    unaccent(import_address_places.city_name) as name_search
   FROM 
     import_address_places 
   GROUP BY 
@@ -68,7 +68,7 @@ CREATE MATERIALIZED VIEW view_address_city_parts AS
   SELECT
     city_part_id as id,
     city_part_name as name,
-    regexp_replace(regexp_replace(regexp_replace(lower(to_ascii(convert_to(import_address_places.city_part_name,'latin2'), 'latin2')), '-', ' '),'\.',' ','g'), '\s+', ' ','g') as name_search,
+    unaccent(import_address_places.city_part_name) as name_search,
     city_id
   FROM
     import_address_places 
@@ -80,7 +80,7 @@ CREATE MATERIALIZED VIEW view_address_streets AS
   SELECT
     street_id as id,
     street_name as name,
-    regexp_replace(regexp_replace(regexp_replace(lower(to_ascii(convert_to(import_address_places.street_name,'latin2'), 'latin2')), '-', ' '),'\.',' ','g'), '\s+', ' ','g') as name_search,
+    unaccent(import_address_places.street_name) as name_search,
     city_id,
     city_part_id,
     zip
@@ -125,7 +125,7 @@ SELECT
       view_address_cities.id as city_id,
 --      now() as created_at,
 --      now() as updated_at,
-      regexp_replace(regexp_replace(regexp_replace(lower(to_ascii(convert_to(import_address_cadastral_territories.name,'latin2'), 'latin2')), '-', ' '),'\.',' ','g'), '\s+', ' ','g') as name_search
+      unaccent(import_address_cadastral_territories.name) as name_search
 FROM
       import_address_cadastral_territories
 JOIN
@@ -154,7 +154,6 @@ DROP INDEX IF EXISTS index_address_places_on_lat_lng;
 CREATE INDEX  index_address_places_on_lat_lng ON view_address_places USING gist(ll_to_earth(latitude, longitude));
 DROP INDEX IF EXISTS index_address_places_on_point;
 CREATE INDEX  index_address_places_on_point ON view_address_places USING gist(point(latitude, longitude));
-
 
 DROP INDEX IF EXISTS index_address_cadastral_territories_on_name_search;
 CREATE INDEX index_address_cadastral_territories_on_name_search ON view_address_cadastral_territories USING gin (name_search gin_trgm_ops);
