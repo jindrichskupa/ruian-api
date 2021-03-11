@@ -188,7 +188,7 @@ components:
       schema:
         $ref: "#/components/schemas/ObjectId"
     CityName:
-      name: "CityName"
+      name: "city"
       in: "path"
       description: "ObjectName"
       schema:
@@ -200,31 +200,31 @@ components:
       schema:
         $ref: "#/components/schemas/ObjectId"
     CityPartName:
-      name: "CityPartName"
+      name: "city_part"
       in: "path"
       description: "ObjectName"
       schema:
         $ref: "#/components/schemas/ObjectName"
     Latitude:
-      name: "Latitude"
+      name: "lat"
       in: "path"
       description: "GPS Latitude"
       schema:
         $ref: "#/components/schemas/GpsCoordinate"
     Longitude:
-      name: "Longitude"
+      name: "lng"
       in: "path"
       description: "GPS Longitude"
       schema:
         $ref: "#/components/schemas/GpsCoordinate"
     Range:
-      name: "Range"
+      name: "range"
       in: "path"
       description: "GPS Range in meters"
       schema:
         $ref: "#/components/schemas/Range"
     Limit:
-      name: "Limit"
+      name: "limit"
       in: "path"
       description: "Max results"
       schema:
@@ -260,7 +260,7 @@ components:
       schema:
         $ref: "#/components/schemas/ObjectId"
     StreetName:
-      name: "StreetName"
+      name: "street"
       in: "path"
       description: "ObjectName"
       schema:
@@ -272,7 +272,7 @@ components:
       schema:
         $ref: "#/components/schemas/ObjectId"
     Zip:
-      name: "Zip"
+      name: "zip"
       in: "path"
       description: "ObjectId"
       schema:

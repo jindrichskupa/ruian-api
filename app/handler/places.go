@@ -94,12 +94,12 @@ func searchPlaceOr404(db *gorm.DB, w http.ResponseWriter, r *http.Request) *[]mo
 		}
 	}
 
-	if queryValues["latitude"] != nil && queryValues["longitude"] != nil {
-		gpsRange := 1000
+	if queryValues["lat"] != nil && queryValues["lng"] != nil {
+		gpsRange := 100
 		if queryValues["range"] != nil {
 			gpsRange, err := strconv.Atoi(queryValues["range"][0])
 			if err != nil || gpsRange > 1000 {
-				gpsRange = 1000
+				gpsRange = 100
 			}
 		}
 		// geoFilter := fmt.Sprintf("earth_box(ll_to_earth(latitude,longitude), %s) @> ll_to_earth(%s,%s)",
@@ -108,8 +108,8 @@ func searchPlaceOr404(db *gorm.DB, w http.ResponseWriter, r *http.Request) *[]mo
 		// 	queryValues["longitude"][0],
 		// )
 		geoFilter := fmt.Sprintf("point(latitude,longitude) <@> point(%s,%s) < %d::float8/1609::float8",
-			queryValues["latitude"][0],
-			queryValues["longitude"][0],
+			queryValues["lat"][0],
+			queryValues["lng"][0],
 			gpsRange,
 		)
 
